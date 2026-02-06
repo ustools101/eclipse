@@ -9,6 +9,7 @@ import {
   verifyRefreshToken,
   sanitizeUser,
   sanitizeAdmin,
+  generateOTP,
 } from '@/lib/utils';
 import {
   IUser,
@@ -65,6 +66,8 @@ export class AuthService {
       accountType: data.accountType,
       pin: pin,
       status: UserStatus.PENDING,
+      cotCode: generateOTP(6), // Auto-generate 6-digit COT code
+      imfCode: generateOTP(6), // Auto-generate 6-digit IMF code
       referredBy,
     });
 

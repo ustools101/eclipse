@@ -26,6 +26,8 @@ import {
   getDebitAlertEmailSubject,
   getAccountApprovalEmailTemplate,
   getAccountApprovalEmailSubject,
+  getRegistrationReceivedEmailTemplate,
+  getRegistrationReceivedEmailSubject,
   getBaseTemplate,
   EmailTemplateProps,
 } from '@/lib/email';
@@ -89,6 +91,25 @@ export class EmailService {
     await sendEmail({
       to: user.email,
       subject: getWelcomeEmailSubject(settings.siteName),
+      html,
+    });
+  }
+
+  /**
+   * Send registration received email (account under review)
+   */
+  static async sendRegistrationReceivedEmail(user: { email: string; name: string }): Promise<void> {
+    const settings = await getSiteSettings();
+    const emailProps = await getEmailProps();
+
+    const html = getRegistrationReceivedEmailTemplate({
+      ...emailProps,
+      userName: user.name,
+    });
+
+    await sendEmail({
+      to: user.email,
+      subject: getRegistrationReceivedEmailSubject(settings.siteName),
       html,
     });
   }

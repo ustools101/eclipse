@@ -54,3 +54,11 @@ export {
   getAccountApprovalEmailSubject,
 } from './accountApproval';
 export type { AccountApprovalEmailProps } from './accountApproval';
+
+// Registration received email
+export {
+  getRegistrationReceivedEmailTemplate,
+  getRegistrationReceivedEmailSubject,
+} from './registrationReceived';
+export type { RegistrationReceivedEmailProps } from './registrationReceived';
+
