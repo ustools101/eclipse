@@ -68,6 +68,9 @@ export async function PUT(
       return notFoundResponse('User not found');
     }
 
+    // Capture original status BEFORE any mutations for email trigger logic
+    const originalStatus = user.status;
+
     // Update allowed fields (must match User model field names)
     const allowedFields = [
       'name', 'email', 'phone', 'country', 'currency', 'address', 'city', 'zipCode',
@@ -129,7 +132,7 @@ export async function PUT(
     const updatedUser = await User.findById(id);
 
     // Check if status changed to ACTIVE and send email
-    if (updatedUser && body.status === 'active' && user.status !== 'active') {
+    if (updatedUser && body.status === 'active' && originalStatus !== 'active') {
       try {
         // Import dynamically to avoid circular dependencies if any
         const { EmailService } = await import('@/services/emailService');
