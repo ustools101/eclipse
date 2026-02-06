@@ -97,8 +97,18 @@ export class TransactionService {
       status: DepositStatus.PENDING,
     });
 
-    // NOTE: Transaction record is created when admin approves the deposit
-    // via processDeposit() - no duplicate transaction creation here
+    // Create pending transaction record so users can see it in their transaction history
+    const currentBalance = user.balance || 0;
+    await Transaction.create({
+      user: user._id,
+      type: TransactionType.DEPOSIT,
+      amount,
+      balanceBefore: currentBalance,
+      balanceAfter: currentBalance, // Will be updated when approved
+      status: TransactionStatus.PENDING,
+      description: `Deposit via ${paymentMethod.name} - ${deposit.reference}`,
+      reference: deposit.reference,
+    });
 
     // Create notification
     await Notification.create({
@@ -180,17 +190,16 @@ export class TransactionService {
         user.balance += deposit.amount;
         await user.save();
 
-        // Create transaction record
-        await Transaction.create({
-          user: user._id,
-          type: TransactionType.DEPOSIT,
-          amount: deposit.amount,
-          balanceBefore,
-          balanceAfter: user.balance,
-          status: TransactionStatus.COMPLETED,
-          description: `Deposit approved - ${deposit.reference}`,
-          reference: deposit.reference,
-        });
+        // Update existing pending transaction record (created when deposit was submitted)
+        await Transaction.findOneAndUpdate(
+          { reference: deposit.reference },
+          {
+            status: TransactionStatus.COMPLETED,
+            balanceBefore,
+            balanceAfter: user.balance,
+            description: `Deposit approved - ${deposit.reference}`,
+          }
+        );
 
         // Create notification
         await Notification.create({
@@ -215,6 +224,15 @@ export class TransactionService {
         });
       }
     } else {
+      // Update transaction to failed status
+      await Transaction.findOneAndUpdate(
+        { reference: deposit.reference },
+        {
+          status: TransactionStatus.FAILED,
+          description: `Deposit rejected - ${deposit.reference}`,
+        }
+      );
+
       // Create rejection notification
       const user = await User.findById(deposit.user);
       if (user) {
