@@ -181,6 +181,32 @@ export async function PUT(request: NextRequest) {
       return errorResponse('Action is required', 400);
     }
 
+    // Handle user-source deposits via TransactionService (updates balance, sends emails)
+    if (source === 'user') {
+      const { TransactionService } = await import('@/services/transactionService');
+
+      if (action === 'approve') {
+        const deposit = await TransactionService.processDeposit(
+          depositId,
+          DepositStatus.APPROVED,
+          admin._id.toString(),
+          body.adminNote
+        );
+        return successResponse(deposit, 'Deposit approved successfully');
+      } else if (action === 'reject') {
+        const deposit = await TransactionService.processDeposit(
+          depositId,
+          DepositStatus.REJECTED,
+          admin._id.toString(),
+          body.adminNote
+        );
+        return successResponse(deposit, 'Deposit rejected successfully');
+      } else {
+        return errorResponse('Invalid action', 400);
+      }
+    }
+
+    // Handle admin-source transactions (legacy behavior)
     const transaction = await Transaction.findById(depositId);
     if (!transaction) {
       return errorResponse('Transaction not found', 404);
@@ -204,3 +230,4 @@ export async function PUT(request: NextRequest) {
     return handleError(error);
   }
 }
+

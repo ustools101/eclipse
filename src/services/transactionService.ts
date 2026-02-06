@@ -97,22 +97,8 @@ export class TransactionService {
       status: DepositStatus.PENDING,
     });
 
-    // Create a transaction record for this deposit
-    // Balance will be updated when admin approves the deposit
-    const currentBalance = user.balance || 0;
-    await Transaction.create({
-      user: user._id,
-      type: TransactionType.DEPOSIT,
-      amount,
-      balanceBefore: currentBalance,
-      balanceAfter: currentBalance, // Will be updated when approved
-      status: TransactionStatus.PENDING,
-      description: `Deposit via ${paymentMethod.name}`,
-      metadata: {
-        depositId: deposit._id,
-        paymentMethod: paymentMethod.name,
-      },
-    });
+    // NOTE: Transaction record is created when admin approves the deposit
+    // via processDeposit() - no duplicate transaction creation here
 
     // Create notification
     await Notification.create({
@@ -903,10 +889,10 @@ export class TransactionService {
     await transfer.save();
 
     // Update transaction status
-    const txnStatus = status === TransferStatus.COMPLETED 
-      ? TransactionStatus.COMPLETED 
+    const txnStatus = status === TransferStatus.COMPLETED
+      ? TransactionStatus.COMPLETED
       : TransactionStatus.FAILED;
-    
+
     await Transaction.findOneAndUpdate(
       { reference: transfer.reference },
       { status: txnStatus }
