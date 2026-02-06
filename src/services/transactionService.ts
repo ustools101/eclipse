@@ -534,8 +534,19 @@ export class TransactionService {
       throw new Error('Sender not found');
     }
 
-    if (sender.status !== UserStatus.ACTIVE) {
-      throw new Error('Your account is not active');
+    // Check account status - allow ACTIVE and INACTIVE (inactive users have withdrawal fee requirements shown on frontend)
+    // Block only truly restricted statuses
+    if (sender.status === UserStatus.SUSPENDED) {
+      throw new Error('Your account has been suspended. Please contact support.');
+    }
+    if (sender.status === UserStatus.BLOCKED) {
+      throw new Error('Your account has been blocked. Please contact support.');
+    }
+    if (sender.status === UserStatus.DORMANT) {
+      throw new Error('Your account is dormant due to inactivity. Please contact support to reactivate.');
+    }
+    if (sender.status === UserStatus.PENDING) {
+      throw new Error('Your account is pending approval. Please wait for account activation.');
     }
 
     if (sender.balance < amount) {
@@ -652,8 +663,19 @@ export class TransactionService {
       throw new Error('Sender not found');
     }
 
-    if (sender.status !== UserStatus.ACTIVE) {
-      throw new Error('Your account is not active');
+    // Check account status - allow ACTIVE and INACTIVE (inactive users have withdrawal fee requirements shown on frontend)
+    // Block only truly restricted statuses
+    if (sender.status === UserStatus.SUSPENDED) {
+      throw new Error('Your account has been suspended. Please contact support.');
+    }
+    if (sender.status === UserStatus.BLOCKED) {
+      throw new Error('Your account has been blocked. Please contact support.');
+    }
+    if (sender.status === UserStatus.DORMANT) {
+      throw new Error('Your account is dormant due to inactivity. Please contact support to reactivate.');
+    }
+    if (sender.status === UserStatus.PENDING) {
+      throw new Error('Your account is pending approval. Please wait for account activation.');
     }
 
     // Calculate fee (example: 1% for local, 2% for international)
