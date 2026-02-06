@@ -128,6 +128,7 @@ export default function DepositsPage() {
         body: JSON.stringify({
           depositId: selectedDeposit._id,
           action: 'approve',
+          source: selectedDeposit.source,
         }),
       });
 
@@ -158,7 +159,8 @@ export default function DepositsPage() {
         body: JSON.stringify({
           depositId: selectedDeposit._id,
           action: 'reject',
-          reason: rejectReason,
+          source: selectedDeposit.source,
+          adminNote: rejectReason,
         }),
       });
 
