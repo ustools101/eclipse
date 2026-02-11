@@ -54,6 +54,8 @@ export default function AdminDashboardLayout({
     checkAuth();
   }, [router]);
 
+  return <div></div>
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center">
