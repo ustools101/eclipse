@@ -23,7 +23,7 @@ export default function AdminDashboardLayout({
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('adminToken');
-      
+
       if (!token) {
         router.push('/admin/login');
         return;
@@ -54,8 +54,6 @@ export default function AdminDashboardLayout({
     checkAuth();
   }, [router]);
 
-  return <div></div>
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[var(--bg)] flex items-center justify-center">
@@ -71,13 +69,13 @@ export default function AdminDashboardLayout({
     <div className="min-h-screen bg-[var(--bg)]">
       <div className="flex">
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        
+
         <div className="flex-1 lg:ml-0">
           <Topbar
             onMenuClick={() => setSidebarOpen(true)}
             admin={admin || undefined}
           />
-          
+
           <main className="p-4 lg:p-6">
             <div className="max-w-[1280px] mx-auto">
               {children}
