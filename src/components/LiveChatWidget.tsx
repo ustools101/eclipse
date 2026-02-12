@@ -14,8 +14,9 @@ export default function LiveChatWidget() {
     return (
         <Script
             id="jivo-chat"
-            src="https://code.jivosite.com/widget/TmauFxrNte"
+            src="https://code.jivosite.com/widget/obLJKGdMka"
             strategy="afterInteractive"
         />
+
     );
 }
